@@ -31,4 +31,6 @@
 	bluez-tools
 	blueman
   ];
+
+  programs.ssh.startAgent = true;
 }
