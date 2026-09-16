@@ -7,12 +7,16 @@
 {
   imports = [
     ./systemd-boot
+    ./bluetooth
     ./network-manager
     ./pipewire
     ./xdg
     ./fonts
     ./flatpak
+    ./zsh
+    ./udiskie
   ];
+
 
   nix.settings.experimental-features = [ "nix-command" "flakes"];
   nixpkgs.config.allowUnfree = true;
@@ -48,20 +52,16 @@
 
   users.users.antpond = {
     isNormalUser = true;
-    description = "main user";
+    description = "Antpond";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
     shell = pkgs.zsh;
   };
 
-
   programs.nix-ld.enable = true;
 
-  # those are all placeholders to be moved
+  # to be moved somewhere
   programs.steam.enable = true;
-  programs.zsh.enable = true;
-  # mango to be figured out
-  # programs.mangowm.enable = true;
 
   # except for this obviously
   system.stateVersion = "24.11"; # Did you read the comment?

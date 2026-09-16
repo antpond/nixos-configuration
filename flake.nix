@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-old.url = "github:nixos/nixpkgs/871b9fd269ff6246794583ce4ee1031e1da71895";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -11,7 +12,6 @@
 
     nixvim = {
     	url = "github:nix-community/nixvim";
-	inputs.nixpkgs.follows = "nixpkgs";
     };
 
     mangowm = {
@@ -19,12 +19,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-outputs = inputs@{ nixpkgs, mangowm, home-manager, nixvim, ... }: {
+outputs = inputs@{ nixpkgs, nixpkgs-old, mangowm, home-manager, nixvim, ... }: {
     nixosConfigurations = {
       gnome = nixpkgs.lib.nixosSystem {
         modules = [
           ./hosts
 	  ./modules/desktop/gnome
+	  ({ pkgs, ... }: {
+	   nixpkgs.overlays = [
+	   (final: prev: {
+	    linux-firmware = nixpkgs-old.legacyPackages.${pkgs.system}.linux-firmware;
+	    })
+	   ];
+	   })
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
@@ -40,6 +47,14 @@ outputs = inputs@{ nixpkgs, mangowm, home-manager, nixvim, ... }: {
         modules = [
 	  ./hosts
 	  ./modules/desktop/mangowm
+    	  ./modules/core/greetd
+	  ({ pkgs, ... }: {
+	   nixpkgs.overlays = [
+	   (final: prev: {
+	    linux-firmware = nixpkgs-old.legacyPackages.${pkgs.system}.linux-firmware;
+	    })
+	   ];
+	   })
 	  mangowm.nixosModules.mango
           home-manager.nixosModules.home-manager
           {
@@ -52,6 +67,7 @@ outputs = inputs@{ nixpkgs, mangowm, home-manager, nixvim, ... }: {
 	      imports = [
                 ./hosts/home.nix
 		mangowm.hmModules.mango
+		./modules/desktop/mangowm/config
 	      ];
 	    };
           }

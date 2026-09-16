@@ -51,6 +51,19 @@
     TERMINAL = "ghostty";
     XDG_CACHE_HOME = "/home/antpond/.cache";
   };
+  
+  # auto-mounting
+  services.udiskie = {
+    enable = true;
+    settings = {
+        # workaround for
+        # https://github.com/nix-community/home-manager/issues/632
+        program_options = {
+            # replace with your favorite file manager
+            file_manager = "${pkgs.nautilus}/bin/nemo";
+        };
+    };
+};
 
   programs.home-manager.enable = true;
 }

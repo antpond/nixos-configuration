@@ -2,6 +2,7 @@
 	imports = [
 		./plugins/lsp.nix
 		./plugins/nvim-cmp.nix
+		./plugins/colorschemes.nix
 	];
 
 	programs.nixvim = {
@@ -9,7 +10,7 @@
 		defaultEditor = true;
 
 		colorschemes = {
-			gruvbox = {
+			melange = {
 				enable = true;
 			};
 		};
