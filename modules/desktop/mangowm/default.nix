@@ -30,6 +30,8 @@
 	bluez
 	bluez-tools
 	blueman
+
+	xdg-desktop-portal-wlr
   ];
 
   programs.ssh.startAgent = true;
