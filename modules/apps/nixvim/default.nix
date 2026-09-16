@@ -2,18 +2,13 @@
 	imports = [
 		./plugins/lsp.nix
 		./plugins/nvim-cmp.nix
-		./plugins/colorschemes.nix
 	];
 
 	programs.nixvim = {
 		enable = true;
 		defaultEditor = true;
 
-		colorschemes = {
-			melange = {
-				enable = true;
-			};
-		};
+		colorschemes.melange.enable = true;
 
 		opts = {
 			number = true;

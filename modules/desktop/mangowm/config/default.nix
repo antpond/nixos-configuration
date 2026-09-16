@@ -6,6 +6,7 @@
 	./waybar
 	./hyprlock
 	./fuzzel
+	./miku_cursor
   ];
 
   wayland.windowManager.mango = {
