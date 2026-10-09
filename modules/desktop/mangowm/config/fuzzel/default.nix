@@ -18,7 +18,7 @@
 
         line-height = 28;
 
-        prompt = "♫  ";
+        prompt = "";
         placeholder = "Search applications...";
 
         icon-theme = "Zafiro";
@@ -29,19 +29,19 @@
 
       border = {
         width = 2;
-        radius = 14;
+        radius = 0;
       };
 
       colors = {
-        background = "101a24f2";
-        text = "e6ffffff";
+        background = "161616ff";
+        text = "f4f4f4ff";
 
-        match = "39d9d0ff";
-        selection = "39d9d0ff";
-        selection-text = "101a24ff";
-        selection-match = "ff79c6ff";
+        match = "e0e0e0ff";
+        selection = "262626ff";
+        selection-text = "f4f4f4ff";
+        selection-match = "e0e0e0ff";
 
-        border = "39d9d0ff";
+        border = "393939ff";
       };
 
       dmenu = {
