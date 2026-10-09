@@ -26,6 +26,7 @@
 	corefonts
 	libreoffice
 	zed-editor
+	obs-studio
 
 	cmake
 	ninja
@@ -49,7 +50,13 @@
     EDITOR = "nvim";
     TERMINAL = "ghostty";
     XDG_CACHE_HOME = "/home/antpond/.cache";
+
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
   };
+
+  services.hypridle.enable = true;
   
   # auto-mounting
   services.udiskie = {

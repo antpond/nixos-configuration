@@ -1,4 +1,164 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+
+let
+  keyboardIndicator = pkgs.writeShellScript "waybar-keyboard-indicator" ''
+    set -u
+
+    mango_layout="$(
+      mmsg get keyboardlayout 2>/dev/null \
+        | sed -n 's/.*"\([^"]*\)".*/\1/p'
+    )"
+
+    fcitx_state="$(
+      fcitx5-remote 2>/dev/null || true
+    )"
+
+    fcitx_im="$(
+      fcitx5-remote -n 2>/dev/null || true
+    )"
+
+    # Fcitx5 Pinyin is our Chinese state.
+    if [ "$fcitx_state" = "2" ] && [ "$fcitx_im" = "pinyin" ]; then
+      printf '%s\n' \
+        '{"text":"中","tooltip":"中文 · Pinyin"}'
+      exit 0
+    fi
+
+    case "$mango_layout" in
+      us)
+        printf '%s\n' \
+          '{"text":"EN","tooltip":"English (US)"}'
+        ;;
+
+      pl)
+        printf '%s\n' \
+          '{"text":"PL","tooltip":"Polski"}'
+        ;;
+
+      fr)
+        printf '%s\n' \
+          '{"text":"FR","tooltip":"Français"}'
+        ;;
+
+      de)
+        printf '%s\n' \
+          '{"text":"DE","tooltip":"Deutsch"}'
+        ;;
+
+      *)
+        printf '%s\n' \
+          "{\"text\":\"$mango_layout\",\"tooltip\":\"Keyboard layout: $mango_layout\"}"
+        ;;
+    esac
+  '';
+
+  keyboardNext = pkgs.writeShellScript "waybar-keyboard-next" ''
+    set -eu
+
+    mango_layout="$(
+      mmsg get keyboardlayout 2>/dev/null \
+        | sed -n 's/.*"\([^"]*\)".*/\1/p'
+    )"
+
+    fcitx_im="$(
+      fcitx5-remote -n 2>/dev/null || true
+    )"
+
+    fcitx_state="$(
+      fcitx5-remote 2>/dev/null || true
+    )"
+
+    # 中 -> EN
+    if [ "$fcitx_im" = "pinyin" ] && [ "$fcitx_state" = "2" ]; then
+      fcitx5-remote -c
+      mmsg dispatch switch_keyboard_layout,0
+      exit 0
+    fi
+
+    case "$mango_layout" in
+      us)
+        # EN -> PL
+        mmsg dispatch switch_keyboard_layout,1
+        ;;
+
+      pl)
+        # PL -> FR
+        mmsg dispatch switch_keyboard_layout,2
+        ;;
+
+      fr)
+        # FR -> DE
+        mmsg dispatch switch_keyboard_layout,3
+        ;;
+
+      de)
+        # DE -> 中
+        fcitx5-remote -s pinyin
+        fcitx5-remote -o
+        ;;
+
+      *)
+        # Unknown state -> EN
+        fcitx5-remote -c 2>/dev/null || true
+        mmsg dispatch switch_keyboard_layout,0
+        ;;
+    esac
+  '';
+
+  keyboardPrevious = pkgs.writeShellScript "waybar-keyboard-previous" ''
+    set -eu
+
+    mango_layout="$(
+      mmsg get keyboardlayout 2>/dev/null \
+        | sed -n 's/.*"\([^"]*\)".*/\1/p'
+    )"
+
+    fcitx_im="$(
+      fcitx5-remote -n 2>/dev/null || true
+    )"
+
+    fcitx_state="$(
+      fcitx5-remote 2>/dev/null || true
+    )"
+
+    # 中 -> DE
+    if [ "$fcitx_im" = "pinyin" ] && [ "$fcitx_state" = "2" ]; then
+      fcitx5-remote -c
+      mmsg dispatch switch_keyboard_layout,3
+      exit 0
+    fi
+
+    case "$mango_layout" in
+      us)
+        # EN -> 中
+        fcitx5-remote -s pinyin
+        fcitx5-remote -o
+        ;;
+
+      pl)
+        # PL -> EN
+        mmsg dispatch switch_keyboard_layout,0
+        ;;
+
+      fr)
+        # FR -> PL
+        mmsg dispatch switch_keyboard_layout,1
+        ;;
+
+      de)
+        # DE -> FR
+        mmsg dispatch switch_keyboard_layout,2
+        ;;
+
+      *)
+        # Unknown state -> EN
+        fcitx5-remote -c 2>/dev/null || true
+        mmsg dispatch switch_keyboard_layout,0
+        ;;
+    esac
+  '';
+
+in
 {
   programs.waybar = {
     enable = true;
@@ -8,8 +168,10 @@
         layer = "top";
         position = "top";
         height = 34;
-	margin-left = 10;
-	margin-right = 10;
+
+        margin-left = 10;
+        margin-right = 10;
+
         spacing = 6;
 
         modules-left = [
@@ -22,16 +184,39 @@
         ];
 
         modules-right = [
+          "custom/keyboard"
           "pulseaudio"
           "network"
           "battery"
+	  "power-profiles-daemon"
           "tray"
         ];
 
         "custom/miku" = {
           format = "01";
           tooltip = false;
-	  on-click = "grim -g \"$(slurp)\" - | wl-copy ";
+          on-click = "grim -g \"$(slurp)\" - | wl-copy ";
+        };
+
+        "custom/keyboard" = {
+          exec = "${keyboardIndicator}";
+
+          # Re-read every second. This keeps the indicator synchronized
+          # with both Mango and Fcitx5.
+          interval = 1;
+
+	  return-type = "json";
+	  format = "{}";
+
+          tooltip = true;
+
+          # Left click:
+          # EN -> PL -> FR -> DE -> 中 -> EN
+          on-click = "${keyboardNext}";
+
+          # Right click:
+          # EN <- PL <- FR <- DE <- 中 <- EN
+          on-click-right = "${keyboardPrevious}";
         };
 
         "ext/workspaces" = {
@@ -65,17 +250,19 @@
           sort-by-id = true;
         };
 
-        clock = {
-          format = "  {:%H:%M}";
-          format-alt = "  {:%a %d %b  •  %H:%M}";
+        "clock" = {
+          format = " {:%H:%M}";
+
+          format-alt = " {:%a %d %b • %H:%M}";
 
           tooltip-format =
             "<big>{:%Y %B}</big>\n<tt>{calendar}</tt>";
         };
 
-        pulseaudio = {
-          format = "{icon}  {volume}%";
-          format-muted = "󰖁  muted";
+        "pulseaudio" = {
+          format = "{icon} {volume}%";
+
+          format-muted = "󰖁 muted";
 
           format-icons = {
             default = [
@@ -86,22 +273,24 @@
           };
 
           on-click = "pwvucontrol";
+
           scroll-step = 5;
         };
 
-        network = {
-          format-wifi = "  {signalStrength}%";
-          format-ethernet = "󰈀  {ifname}";
-          format-disconnected = "󰖪  offline";
+        "network" = {
+          format-wifi = " {signalStrength}%";
+          format-ethernet = "󰈀 {ifname}";
+          format-disconnected = "󰖪 offline";
 
           tooltip-format = "{ifname}: {ipaddr}";
           tooltip-format-wifi = "{essid}\n{ipaddr}";
         };
 
-        battery = {
-          format = "{icon}  {capacity}%";
-          format-charging = "󰂄  {capacity}%";
-          format-plugged = "󰚥  {capacity}%";
+        "battery" = {
+          format = "{icon} {capacity}%";
+
+          format-charging = "󰂄 {capacity}%";
+          format-plugged = "󰚥 {capacity}%";
 
           format-icons = [
             "󰁺"
@@ -122,7 +311,19 @@
           };
         };
 
-        tray = {
+	"power-profiles-daemon" = {
+		format= "{icon}";
+		tooltip-format = "Power profile: {profile}nCPU driver: {cpu_driver}nPlatform driver: {platform_driver}";
+		tooltip = true;
+		format-icons = {
+			default = "";
+			performance = "";
+			balanced = "";
+			power-saver = "";
+		};
+	};
+
+        "tray" = {
           spacing = 8;
         };
       };
@@ -135,8 +336,7 @@
 
         font-family:
           "BlexMono Nerd Font Mono",
-          "Noto Sans",
-          sans-serif;
+          "Noto Sans";
 
         font-size: 13px;
         min-height: 0;
@@ -148,14 +348,15 @@
       }
 
       #custom-miku,
+      #custom-keyboard,
       #workspaces,
       #clock,
       #pulseaudio,
       #network,
       #battery,
+      #power-profiles-daemon,
       #tray {
         background: #101a24;
-
         border: 1px solid #39d9d0;
         border-radius: 12px;
 
@@ -167,7 +368,6 @@
 
       #custom-miku {
         color: #ff79c6;
-
         border-color: #39d9d0;
 
         font-weight: bold;
@@ -181,13 +381,29 @@
         border-color: #ff79c6;
       }
 
+      #custom-keyboard {
+        color: #7debe5;
+        border-color: #39d9d0;
+
+        font-weight: bold;
+
+        min-width: 34px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      #custom-keyboard:hover {
+        color: #101a24;
+        background: #39d9d0;
+        border-color: #39d9d0;
+      }
+
       #workspaces {
         padding: 0 5px;
       }
 
       #workspaces button {
         color: #587481;
-
         background: transparent;
 
         border: 1px solid transparent;
@@ -202,42 +418,30 @@
           border-color 150ms ease;
       }
 
-      /* Hover */
-
       #workspaces button:hover {
         color: #39d9d0;
-
         background: #172733;
         border-color: #39d9d0;
       }
 
-      /* Active Mango workspace */
-
       #workspaces button.active {
         color: #101a24;
-
         background: #39d9d0;
         border-color: #39d9d0;
 
         font-weight: bold;
       }
 
-      /* Urgent workspace */
-
       #workspaces button.urgent {
         color: #101a24;
-
         background: #ff79c6;
         border-color: #ff79c6;
 
         font-weight: bold;
       }
 
-      /* Empty workspace */
-
       #workspaces button.empty {
         color: #38515d;
-
         background: transparent;
         border-color: transparent;
       }
@@ -249,7 +453,6 @@
 
       #clock {
         color: #e6ffff;
-
         border-color: #39d9d0;
 
         font-weight: bold;
@@ -292,6 +495,10 @@
         border-color: #ff79c6;
       }
 
+      #power-profiles-daemon {
+        color: #7debe5;
+      }
+
       #tray {
         padding-left: 9px;
         padding-right: 9px;
@@ -299,10 +506,8 @@
 
       tooltip {
         background: #101a24;
-
         border: 1px solid #39d9d0;
         border-radius: 10px;
-
         color: #e6ffff;
       }
 
