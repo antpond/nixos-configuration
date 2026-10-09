@@ -4,66 +4,83 @@
     enable = true;
 
     settings = {
-      background = "0b151c";
-      foreground = "d9ffff";
+      background = "161616";
+      foreground = "f4f4f4";
 
       background-opacity = 0.94;
       background-blur = true;
 
-      cursor-color = "39d9d0";
+      cursor-color = "ffffff";
 
-      selection-background = "245b63";
-      selection-foreground = "eaffff";
+      selection-background = "262626";
+      selection-foreground = "f4f4f4";
 
       palette = [
-        # black
-        "0=#0b151c"
 
-        # red / pink
-        "1=#ff5fa2"
+# black
 
-        # green / Miku cyan
-        "2=#39d9d0"
+	      "0=#161616"
 
-        # yellow
-        "3=#f5d76e"
+# red
 
-        # blue
-        "4=#4fc3f7"
+		      "1=#da1e28"
 
-        # magenta / pink
-        "5=#e56bb6"
+# green
 
-        # cyan
-        "6=#5ce1e6"
+		      "2=#42be65"
 
-        # white
-        "7=#b8dfe2"
+# yellow
 
-        # bright black
-        "8=#38515d"
+		      "3=#f1c21b"
 
-        # bright red
-        "9=#ff82b5"
+# blue
 
-        # bright green
-        "10=#7debe5"
+		      "4=#4589ff"
 
-        # bright yellow
-        "11=#ffe89a"
+# magenta
 
-        # bright blue
-        "12=#82d9ff"
+		      "5=#ee5396"
 
-        # bright magenta
-        "13=#ff9bd3"
+# cyan
 
-        # bright cyan
-        "14=#9af5ef"
+		      "6=#1192e8"
 
-        # bright white
-        "15=#eaffff"
-      ];
+# white
+
+		      "7=#c6c6c6"
+
+# bright black
+
+		      "8=#525252"
+
+# bright red
+
+		      "9=#ff8389"
+
+# bright green
+
+		      "10=#6fdc8c"
+
+# bright yellow
+
+		      "11=#fddc69"
+
+# bright blue
+
+		      "12=#78a9ff"
+
+# bright magenta
+
+		      "13=#ff7eb6"
+
+# bright cyan
+
+		      "14=#33b1ff"
+
+# bright white
+
+		      "15=#f4f4f4"
+		      ];
 
       font-family = "Blex Nerd Font Mono";
       font-size = 12;

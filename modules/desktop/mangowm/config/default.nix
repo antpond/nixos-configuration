@@ -63,12 +63,12 @@
     enable = true;
 
     settings = {
-      borderpx = 1;
-      bordercolor = "0x39d9d0ff";
-      focuscolor = "0xff79c6ff";
+      borderpx = 2;
+      bordercolor = "0x393939ff";
+      focuscolor = "0xffffffff";
 
       blur = 1;
-      border_radius = 12;
+      #border_radius = 12;
 
       # Keyboard layouts handled by Mango/XKB.
       #

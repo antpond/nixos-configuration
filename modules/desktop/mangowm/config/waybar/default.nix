@@ -27,7 +27,7 @@ let
     case "$mango_layout" in
       us)
         printf '%s\n' \
-          '{"text":"EN","tooltip":"English (US)"}'
+          '{"text":"EN","tooltip":"English"}'
         ;;
 
       pl)
@@ -167,15 +167,14 @@ in
       mainBar = {
         layer = "top";
         position = "top";
-        height = 34;
+        height = 40;
 
-        margin-left = 10;
-        margin-right = 10;
+        #margin-left = 10;
+        #margin-right = 10;
 
         spacing = 6;
 
         modules-left = [
-          "custom/miku"
           "ext/workspaces"
         ];
 
@@ -190,10 +189,11 @@ in
           "battery"
 	  "power-profiles-daemon"
           "tray"
+          "custom/screenshot"
         ];
 
-        "custom/miku" = {
-          format = "01";
+        "custom/screenshot" = {
+          format = "󰋩";
           tooltip = false;
           on-click = "grim -g \"$(slurp)\" - | wl-copy ";
         };
@@ -222,23 +222,6 @@ in
         "ext/workspaces" = {
           format = "{icon}";
 
-          format-icons = {
-            "1" = "一";
-            "2" = "二";
-            "3" = "三";
-            "4" = "四";
-            "5" = "五";
-            "6" = "六";
-            "7" = "七";
-            "8" = "八";
-            "9" = "九";
-
-            active = "●";
-            urgent = "◆";
-            empty = "○";
-            default = "○";
-          };
-
           ignore-hidden = true;
 
           # Left click -> activate workspace
@@ -251,9 +234,9 @@ in
         };
 
         "clock" = {
-          format = " {:%H:%M}";
+          format = "{:%H:%M}";
 
-          format-alt = " {:%a %d %b • %H:%M}";
+          format-alt = "{:%H:%M   <span>%a %d %b</span>}";
 
           tooltip-format =
             "<big>{:%Y %B}</big>\n<tt>{calendar}</tt>";
@@ -343,11 +326,11 @@ in
       }
 
       window#waybar {
-        background: transparent;
-        color: #e6ffff;
+        background: #161616;
+        color: #f4f4f4;
       }
 
-      #custom-miku,
+      #custom-screenshot,
       #custom-keyboard,
       #workspaces,
       #clock,
@@ -356,18 +339,10 @@ in
       #battery,
       #power-profiles-daemon,
       #tray {
-        background: #101a24;
-        border: 1px solid #39d9d0;
-        border-radius: 12px;
-
-        margin-top: 6px;
-        margin-bottom: 4px;
-
         padding: 0 12px;
       }
 
-      #custom-miku {
-        color: #ff79c6;
+      #custom-screenshot {
         border-color: #39d9d0;
 
         font-weight: bold;
@@ -376,16 +351,16 @@ in
         padding-right: 14px;
       }
 
-      #custom-miku:hover {
-        color: #ff79c6;
-        border-color: #ff79c6;
+      #custom-screenshot:hover {
+      	background: #262626;
+      }
+
+      #custom-screenshot:active {
+	background: #393939;
       }
 
       #custom-keyboard {
-        color: #7debe5;
-        border-color: #39d9d0;
-
-        font-weight: bold;
+        color: #f4f4f4;
 
         min-width: 34px;
         padding-left: 10px;
@@ -393,9 +368,11 @@ in
       }
 
       #custom-keyboard:hover {
-        color: #101a24;
-        background: #39d9d0;
-        border-color: #39d9d0;
+      	background: #262626;
+      }
+
+      #custom-keyboard:active {
+	background: #393939;
       }
 
       #workspaces {
@@ -403,14 +380,10 @@ in
       }
 
       #workspaces button {
-        color: #587481;
-        background: transparent;
-
-        border: 1px solid transparent;
-        border-radius: 9px;
+        color: #f4f4f4;
+        background: #161616;
 
         padding: 0 9px;
-        margin: 3px 2px;
 
         transition:
           color 150ms ease,
@@ -419,84 +392,76 @@ in
       }
 
       #workspaces button:hover {
-        color: #39d9d0;
-        background: #172733;
-        border-color: #39d9d0;
+        background: #262626;
       }
 
       #workspaces button.active {
-        color: #101a24;
-        background: #39d9d0;
-        border-color: #39d9d0;
-
         font-weight: bold;
+	border-bottom: solid 2px #0f62fe;
       }
 
       #workspaces button.urgent {
-        color: #101a24;
-        background: #ff79c6;
-        border-color: #ff79c6;
-
+        color: #f4f4f4;
+        background: #f1c21b;
         font-weight: bold;
       }
 
       #workspaces button.empty {
-        color: #38515d;
+        color: #e0e0e0;
         background: transparent;
         border-color: transparent;
       }
 
       #workspaces button.empty:hover {
-        color: #39d9d0;
+        color: #f4f4f4;
         border-color: #39d9d0;
       }
 
       #clock {
-        color: #e6ffff;
-        border-color: #39d9d0;
+        color: #f4f4f4;
 
         font-weight: bold;
       }
 
+      #clock > span {
+        color: #e0e0e0;
+      }
+
       #pulseaudio {
-        color: #7debe5;
+        color: #f4f4f4;
       }
 
       #pulseaudio.muted {
-        color: #ff79c6;
+      	background: #da1e28;
         border-color: #ff79c6;
       }
 
       #network {
-        color: #7debe5;
+        color: #f4f4f4;
       }
 
       #network.disconnected {
-        color: #ff79c6;
-        border-color: #ff79c6;
+      	background: #da1e28;
       }
 
       #battery {
-        color: #7debe5;
+        color: #f4f4f4;
       }
 
       #battery.charging {
-        color: #39d9d0;
-        border-color: #39d9d0;
+	background: #198038;
       }
 
       #battery.warning {
-        color: #ffd166;
-        border-color: #ffd166;
+	background: #da1e28;
       }
 
       #battery.critical {
-        color: #ff79c6;
-        border-color: #ff79c6;
+	background: #da1e28;
       }
 
       #power-profiles-daemon {
-        color: #7debe5;
+        color: #f4f4f4;
       }
 
       #tray {
@@ -505,10 +470,8 @@ in
       }
 
       tooltip {
-        background: #101a24;
-        border: 1px solid #39d9d0;
-        border-radius: 10px;
-        color: #e6ffff;
+        background: #393939;
+        color: #f4f4f4;
       }
 
       tooltip label {
