@@ -382,8 +382,11 @@ in
       #workspaces button {
         color: #f4f4f4;
         background: #161616;
+	min-width: 40px;
 
         padding: 0 9px;
+
+	border-color: transparent;
 
         transition:
           color 150ms ease,
@@ -393,6 +396,7 @@ in
 
       #workspaces button:hover {
         background: #262626;
+	border-bottom: solid 2px #525252;
       }
 
       #workspaces button.active {
@@ -414,7 +418,6 @@ in
 
       #workspaces button.empty:hover {
         color: #f4f4f4;
-        border-color: #39d9d0;
       }
 
       #clock {
@@ -433,7 +436,6 @@ in
 
       #pulseaudio.muted {
       	background: #da1e28;
-        border-color: #ff79c6;
       }
 
       #network {

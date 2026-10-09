@@ -24,7 +24,7 @@
 
         text_icon_padding = 10;
 
-        font = "JetBrainsMono Nerd Font 10";
+        font = "BlexMono Nerd Font Mono 10";
 
         title = "<b>%s</b>";
         title_color = "#f4f4f4";

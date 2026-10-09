@@ -235,7 +235,7 @@
         "waybar"
         "dunst"
         "awww-daemon"
-        "awww img ~/Pictures/Wallpapers/hatsune.png"
+        "awww img ~/Pictures/Wallpapers/climber.png"
       ];
     };
   };
